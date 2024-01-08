@@ -1,4 +1,4 @@
-// codehighlighter.cpp
+
 #include "codehighlighter.h"
 #include <QTextDocument>
 #include <QTextBlock>
@@ -9,7 +9,7 @@ CodeHighlighter::CodeHighlighter(QTextDocument *parent) : QSyntaxHighlighter(par
     // 初始化语法规则和格式
     HighlightingRule rule;
 
-    // 关键字格式
+
     keywordFormat.setForeground(Qt::blue);
 
     // C++ 关键字
