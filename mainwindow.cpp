@@ -49,17 +49,19 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actionToolBar->setChecked(true);
     ui->actionListNumber->setChecked(false);
     on_actionListNumber_triggered(false);
-    // 在MainWindow构造函数中添加
+
     connect(ui->actionAddBookmark, &QAction::triggered, this, &MainWindow::on_actionAddBookmark_triggered);
     connect(ui->actionShowBookmarks, &QAction::triggered, this, &MainWindow::on_actionShowBookmarks_triggered);
-
+    // 连接动作的触发信号到槽函数
+    connect(ui->actionFontcolor, &QAction::triggered, this, &MainWindow::on_actionFontcolor_triggered);
+    connect(ui->actionbackcolor, &QAction::triggered, this, &MainWindow::on_actionbackcolor_triggered);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-// 在MainWindow类中添加
+
 void MainWindow::on_actionAddBookmark_triggered()
 {
     QTextCursor cursor = ui->textEdit->textCursor();
@@ -127,19 +129,18 @@ void MainWindow::showRecentFilesList()
         QAction *fileAction = recentFilesMenu->addAction(filePath);
         connect(fileAction, &QAction::triggered, this, [this, filePath]()
         {
-            // 处理打开最近文件的操作
+
             onOpenRecentFile(filePath);
         });
 
     }
 
-    // 将 QMenu 与 recentFilesAction 关联
+
     recentFilesAction->setMenu(recentFilesMenu);
 
-    // 获取 menubar 所在的父部件（这里是 QMainWindow）
+
     QMainWindow *mainWin = qobject_cast<QMainWindow *>(ui->menubar->parentWidget());
 
-    // 显示 QMenu 在最近打开文件的 QAction 的位置下方
     if (mainWin)
     {
         QPoint pos = mainWin->mapToGlobal(ui->menubar->geometry().bottomLeft());
@@ -383,17 +384,17 @@ void MainWindow::on_textEdit_redoAvailable(bool b)
     ui->actionPaste->setEnabled(b);
 }
 
+// 实现槽函数
 void MainWindow::on_actionFontcolor_triggered()
 {
     QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
     if (color.isValid())
     {
-        ui->textEdit->setStyleSheet(QString("QPlainTextEdit (color: %1)").arg(color.name()));
-        QMetaObject::invokeMethod(ui->textEdit, "repaint", Qt::QueuedConnection);
+        ui->textEdit->setStyleSheet(QString("QPlainTextEdit { color: %1; }").arg(color.name()));
     }
     else
     {
-        // handle error here, e.g. display a message to the user
+        // 处理错误，例如向用户显示消息
     }
 }
 
@@ -402,7 +403,11 @@ void MainWindow::on_actionbackcolor_triggered()
     QColor color = QColorDialog::getColor(Qt::black, this, "选择颜色");
     if (color.isValid())
     {
-        ui->textEdit->setStyleSheet(QString("QPlainTextEdit (background-color: %1)").arg(color.name()));
+        ui->textEdit->setStyleSheet(QString("QPlainTextEdit { background-color: %1; }").arg(color.name()));
+    }
+    else
+    {
+        // 处理错误，例如向用户显示消息
     }
 }
 
