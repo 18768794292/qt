@@ -6,7 +6,15 @@
 #include <QTabWidget>
 #include <QTextEdit>
 #include"recentfilesmanager.h"
+#include "customtextedit.h"
+#include <QTextBrowser>  // 替换为 QTextBrowser
+#include <QTextCursor>
 QT_BEGIN_NAMESPACE
+struct Bookmark
+{
+    int lineNumber;
+    int columnNumber;
+};
 namespace Ui
 {
     class MainWindow;
@@ -80,6 +88,12 @@ private slots:
     void showRecentFilesList();
     void onOpenRecentFile(const QString &filePath);
     void updateRecentFilesMenu();
+    void onOpenHyperlink(const QString &link);
+
+
+    void on_actionAddBookmark_triggered();
+    void on_actionShowBookmarks_triggered();
+    void scrollToBookmark(const Bookmark &bookmark);
 private:
     Ui::MainWindow *ui;
     QLabel statusCursorLabel;
@@ -90,5 +104,11 @@ private:
     QTabWidget *tabWidget;  // 添加 QTabWidget 成员变
     RecentFilesManager recentFilesManager;
     QAction *recentFilesAction;  // 新添加的 QAction
+    CustomTextEdit *customTextEdit;
+
+
+
+    QList<Bookmark> bookmarks;
+
 };
 #endif // MAINWINDOW_H

@@ -10,6 +10,8 @@
 #include"QFontDialog"
 #include <QDebug>
 #include"recentfilesmanager.h"
+
+#include "customtextedit.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -33,6 +35,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(recentFilesAction, &QAction::triggered, this, &MainWindow::showRecentFilesList);
     ui->menubar->addAction(recentFilesAction);
     connect(&recentFilesManager, &RecentFilesManager::recentFilesChanged, this, &MainWindow::updateRecentFilesMenu);
+    CustomTextEdit *customTextEdit = new CustomTextEdit(this);
+    connect(customTextEdit, &CustomTextEdit::hyperlinkClicked, this, &MainWindow::onOpenHyperlink);
 
 
     ui->statusbar->addPermanentWidget(author);
@@ -45,15 +49,68 @@ MainWindow::MainWindow(QWidget *parent)
     ui->actionToolBar->setChecked(true);
     ui->actionListNumber->setChecked(false);
     on_actionListNumber_triggered(false);
+    // 在MainWindow构造函数中添加
+    connect(ui->actionAddBookmark, &QAction::triggered, this, &MainWindow::on_actionAddBookmark_triggered);
+    connect(ui->actionShowBookmarks, &QAction::triggered, this, &MainWindow::on_actionShowBookmarks_triggered);
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+// 在MainWindow类中添加
+void MainWindow::on_actionAddBookmark_triggered()
+{
+    QTextCursor cursor = ui->textEdit->textCursor();
+    Bookmark bookmark;
+    bookmark.lineNumber = cursor.blockNumber() + 1;
+    bookmark.columnNumber = cursor.columnNumber() + 1;
+    bookmarks.append(bookmark);
+
+    qDebug() << "Bookmark added at Line:" << bookmark.lineNumber << "Column:" << bookmark.columnNumber;
+}
+
+void MainWindow::on_actionShowBookmarks_triggered()
+{
+    QMenu *bookmarksMenu = new QMenu(this);
+
+    for (const Bookmark &bookmark : bookmarks)
+    {
+        QString label = QString("Line %1, Column %2").arg(bookmark.lineNumber).arg(bookmark.columnNumber);
+        QAction *bookmarkAction = bookmarksMenu->addAction(label);
+        connect(bookmarkAction, &QAction::triggered, this, [this, bookmark]()
+        {
+            // 处理点击书签的操作，例如滚动到对应的位置
+            scrollToBookmark(bookmark);
+        });
+    }
+
+    // 直接在菜单项的位置下方显示
+    bookmarksMenu->popup(ui->actionShowBookmarks->parentWidget()->mapToGlobal(ui->actionShowBookmarks->parentWidget()->pos()));
+}
+
+
+void MainWindow::scrollToBookmark(const Bookmark &bookmark)
+{
+    // 根据书签信息滚动到对应的位置
+    QTextCursor cursor = ui->textEdit->textCursor();
+    cursor.setPosition(ui->textEdit->document()->findBlockByLineNumber(bookmark.lineNumber - 1).position());
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, bookmark.columnNumber - 1);
+    ui->textEdit->setTextCursor(cursor);
+
+    // 如果需要，可以将光标所在的位置滚动到可见区域
+    ui->textEdit->ensureCursorVisible();
+}
+
+
 void MainWindow::updateRecentFilesMenu()
 {
     showRecentFilesList();
+}
+void MainWindow::onOpenHyperlink(const QString &link)
+{
+    CustomTextEdit::openHyperlink(link);
 }
 
 // 在 showRecentFilesList 槽函数中获取最近打开文件列表并显示
