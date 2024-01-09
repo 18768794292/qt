@@ -88,14 +88,14 @@ void MainWindow::on_actionShowBookmarks_triggered()
         });
     }
 
-
+    // 直接在菜单项的位置下方显示
     bookmarksMenu->popup(ui->actionShowBookmarks->parentWidget()->mapToGlobal(ui->actionShowBookmarks->parentWidget()->pos()));
 }
 
 
 void MainWindow::scrollToBookmark(const Bookmark &bookmark)
 {
-
+    // 根据书签信息滚动到对应的位置
     QTextCursor cursor = ui->textEdit->textCursor();
     cursor.setPosition(ui->textEdit->document()->findBlockByLineNumber(bookmark.lineNumber - 1).position());
     cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, bookmark.columnNumber - 1);
@@ -232,7 +232,7 @@ void MainWindow::on_actionOpen_triggered()
     file.close();
     this->setWindowTitle(QFileInfo(filename).absoluteFilePath());
     textchanged = false;
-
+    // 添加最近文件
     recentFilesManager.addRecentFile(filePath);
 }
 
