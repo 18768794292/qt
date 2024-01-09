@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionAddBookmark, &QAction::triggered, this, &MainWindow::on_actionAddBookmark_triggered);
     connect(ui->actionShowBookmarks, &QAction::triggered, this, &MainWindow::on_actionShowBookmarks_triggered);
-    // 连接动作的触发信号到槽函数
+
     connect(ui->actionFontcolor, &QAction::triggered, this, &MainWindow::on_actionFontcolor_triggered);
     connect(ui->actionbackcolor, &QAction::triggered, this, &MainWindow::on_actionbackcolor_triggered);
 }
@@ -83,19 +83,19 @@ void MainWindow::on_actionShowBookmarks_triggered()
         QAction *bookmarkAction = bookmarksMenu->addAction(label);
         connect(bookmarkAction, &QAction::triggered, this, [this, bookmark]()
         {
-            // 处理点击书签的操作，例如滚动到对应的位置
+
             scrollToBookmark(bookmark);
         });
     }
 
-    // 直接在菜单项的位置下方显示
+
     bookmarksMenu->popup(ui->actionShowBookmarks->parentWidget()->mapToGlobal(ui->actionShowBookmarks->parentWidget()->pos()));
 }
 
 
 void MainWindow::scrollToBookmark(const Bookmark &bookmark)
 {
-    // 根据书签信息滚动到对应的位置
+
     QTextCursor cursor = ui->textEdit->textCursor();
     cursor.setPosition(ui->textEdit->document()->findBlockByLineNumber(bookmark.lineNumber - 1).position());
     cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, bookmark.columnNumber - 1);
@@ -232,7 +232,7 @@ void MainWindow::on_actionOpen_triggered()
     file.close();
     this->setWindowTitle(QFileInfo(filename).absoluteFilePath());
     textchanged = false;
-    // 添加最近文件
+
     recentFilesManager.addRecentFile(filePath);
 }
 
