@@ -6,13 +6,13 @@
 
 CodeHighlighter::CodeHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
 {
-    // 初始化语法规则和格式
+
     HighlightingRule rule;
 
 
     keywordFormat.setForeground(Qt::blue);
 
-    // C++ 关键字
+
     QStringList cppKeywords;
     cppKeywords << "\\bint\\b" << "\\bfloat\\b" << "\\bdouble\\b"
                 << "\\bchar\\b" << "\\bbool\\b" << "\\bvoid\\b"
@@ -25,7 +25,7 @@ CodeHighlighter::CodeHighlighter(QTextDocument *parent) : QSyntaxHighlighter(par
         highlightingRules.append(rule);
     }
 
-    // Java 关键字
+
     QStringList javaKeywords;
     javaKeywords << "\\bint\\b" << "\\bfloat\\b" << "\\bdouble\\b"
                  << "\\bchar\\b" << "\\bboolean\\b" << "\\bvoid\\b"
@@ -38,7 +38,7 @@ CodeHighlighter::CodeHighlighter(QTextDocument *parent) : QSyntaxHighlighter(par
         highlightingRules.append(rule);
     }
 
-    // 其他语法规则，包括单行注释、多行注释、字符串和数字
+
     singleLineCommentFormat.setForeground(Qt::green);
     rule.pattern = QRegularExpression("//[^\n]*");
     rule.format = singleLineCommentFormat;
